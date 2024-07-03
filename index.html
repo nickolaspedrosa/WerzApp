@@ -78,6 +78,7 @@
                     <th>Firebase Cost</th>
                     <th>Twilio Cost</th>
                     <th>Profit</th>
+                    <th>Margin (%)</th>
                 </tr>
             </thead>
             <tbody>
@@ -144,6 +145,10 @@
             const profit = subscriptionRevenue.map((subRev, index) => {
                 return subRev + deliveryFeeRevenue[index] - firebaseCost[index] - twilioCost[index];
             });
+            const margin = profit.map((profitValue, index) => {
+                const totalRevenue = subscriptionRevenue[index] + deliveryFeeRevenue[index];
+                return (profitValue / totalRevenue) * 100;
+            });
 
             // Populate the table with results
             const tableBody = document.querySelector("#resultTable tbody");
@@ -157,64 +162,102 @@
                     <td>${firebaseCost[i].toFixed(2)}</td>
                     <td>${twilioCost[i].toFixed(2)}</td>
                     <td>${profit[i].toFixed(2)}</td>
+                    <td>${margin[i].toFixed(2)}</td>
                 `;
                 tableBody.appendChild(row);
             }
 
             // Generate the chart
-            const ctx = document.getElementById('myChart').getContext('2d');
-            
-            // Check if the chart instance already exists, destroy it if it does
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
+const ctx = document.getElementById('myChart').getContext('2d');
 
-            // Create a new chart instance
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: subscriptionRevenue.map((_, i) => `Year ${i + 1}`),
-                    datasets: [
-                        {
-                            label: 'Subscription Revenue',
-                            data: subscriptionRevenue,
-                            borderColor: 'blue',
-                            fill: false
-                        },
-                        {
-                            label: 'Delivery Fee Revenue',
-                            data: deliveryFeeRevenue,
-                            borderColor: 'green',
-                            fill: false
-                        },
-                        {
-                            label: 'Firebase Cost',
-                            data: firebaseCost,
-                            borderColor: 'red',
-                            fill: false
-                        },
-                        {
-                            label: 'Twilio Cost',
-                            data: twilioCost,
-                            borderColor: 'purple',
-                            fill: false
-                        },
-                        {
-                            label: 'Profit',
-                            data: profit,
-                            borderColor: 'black',
-                            fill: false
-                        }
-                    ]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
+// Check if the chart instance already exists, destroy it if it does
+if (chartInstance) {
+    chartInstance.destroy();
+}
+
+// Create a new chart instance
+chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: subscriptionRevenue.map((_, i) => `Year ${i + 1}`),
+        datasets: [
+            {
+                label: 'Subscription Revenue',
+                data: subscriptionRevenue,
+                borderColor: 'blue',
+                backgroundColor: 'blue',
+                fill: false,
+                yAxisID: 'y'
+            },
+            {
+                label: 'Delivery Fee Revenue',
+                data: deliveryFeeRevenue,
+                borderColor: 'green',
+                backgroundColor: 'green',
+                fill: false,
+                yAxisID: 'y'
+            },
+            {
+                label: 'Firebase Cost',
+                data: firebaseCost,
+                borderColor: 'red',
+                backgroundColor: 'red',
+                fill: false,
+                yAxisID: 'y'
+            },
+            {
+                label: 'Twilio Cost',
+                data: twilioCost,
+                borderColor: 'purple',
+                backgroundColor: 'purple',
+                fill: false,
+                yAxisID: 'y'
+            },
+            {
+                label: 'Profit',
+                data: profit,
+                borderColor: 'black',
+                backgroundColor: 'black',
+                fill: false,
+                yAxisID: 'y'
+            },
+            {
+                label: 'Margin (%)',
+                data: margin,
+                borderColor: 'orange',
+                backgroundColor: 'orange',
+                fill: false,
+                yAxisID: 'y1'
+            }
+        ]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                type: 'linear',
+                position: 'left',
+                title: {
+                    display: true,
+                    text: 'Amount (USD)'
                 }
-            });
+            },
+            y1: {
+                beginAtZero: true,
+                type: 'linear',
+                position: 'right',
+                title: {
+                    display: true,
+                    text: 'Margin (%)'
+                },
+                grid: {
+                    drawOnChartArea: false // Only grid lines for y-axis on the left will be drawn
+                }
+            }
+        }
+    }
+});
+
         }
     </script>
 </body>
