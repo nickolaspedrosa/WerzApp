@@ -130,7 +130,7 @@
             function calculateTwilioCost(businessData, tierData) {
                 return businessData[0].map((_, yearIndex) => {
                     return businessData.reduce((total, tierBusinesses, tier) => {
-                        const messagesPerOrder = tierData[tier][0] * 3;
+                        const messagesPerOrder = (tierData[tier][0]+25) * 1.05;
                         const twilioCostPerBusiness = tierData[tier][1] * messagesPerOrder * 0.005;
                         return total + (tierBusinesses[yearIndex] * twilioCostPerBusiness);
                     }, 0);
